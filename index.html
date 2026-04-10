@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Shop - Online Booking</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>☕ Coffee Haven</h1>
+            <p>Book your table now!</p>
+        </header>
+
+        <form id="bookingForm" class="booking-form">
+            <div class="form-group">
+                <label>Pangalan:</label>
+                <input type="text" id="customer_name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="customer_email" required>
+            </div>
+
+            <div class="form-group">
+                <label>Phone:</label>
+                <input type="tel" id="customer_phone">
+            </div>
+
+            <div class="form-group">
+                <label>Date ng Booking:</label>
+                <input type="date" id="booking_date" required>
+            </div>
+
+            <div class="form-group">
+                <label>Oras:</label>
+                <select id="booking_time" required>
+                    <option value="">Piliin ang oras</option>
+                    <option value="09:00">9:00 AM</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="11:00">11:00 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="13:00">1:00 PM</option>
+                    <option value="14:00">2:00 PM</option>
+                    <option value="15:00">3:00 PM</option>
+                    <option value="16:00">4:00 PM</option>
+                    <option value="17:00">5:00 PM</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Bilang ng Tao:</label>
+                <select id="number_of_people" required>
+                    <option value="">Piliin</option>
+                    <option value="1">1 person</option>
+                    <option value="2">2 people</option>
+                    <option value="3">3 people</option>
+                    <option value="4">4 people</option>
+                    <option value="5">5+ people</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Special Requests (Optional):</label>
+                <textarea id="special_requests" rows="3" placeholder="Ex: Table sa may window, vegan menu..."></textarea>
+            </div>
+
+            <button type="submit">Book Now! ☕</button>
+        </form>
+
+        <div id="message"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
