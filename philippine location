@@ -1,4 +1,4 @@
-/******************************** PHILIPPINE AUTO-LOAD ADDRESS (MODIFIED FOR CALABARZON) **********/    
+/******************************** PHILIPPINE AUTO-LOAD ADDRESS (MODIFIED FOR CALABARZON) **********/
     const provinceSelect = document.getElementById("province");
     const citySelect = document.getElementById("city");
     const barangaySelect = document.getElementById("barangay");
@@ -13,7 +13,7 @@ fetch("https://psgc.gitlab.io/api/provinces/")
     calabarzonProvinces.sort((a, b) => a.name.localeCompare(b.name));
     provinceSelect.innerHTML = `<option value="">Select Province</option>`; // Reset options
     calabarzonProvinces.forEach(province => {
-      provinceSelect.innerHTML += `<option value="${province.code}">${province.name}</option>`;
+      provinceSelect.innerHTML += `<option value="${province.code}" data-name="${province.name}">${province.name}</option>`;
     });
   })
   .catch(error => {
@@ -24,6 +24,7 @@ fetch("https://psgc.gitlab.io/api/provinces/")
 // When Province changes → load Cities
 provinceSelect.addEventListener("change", function () {
   const provinceCode = this.value;
+  const provinceName = this.options[this.selectedIndex].dataset.name; // Get the name
 
   citySelect.innerHTML = `<option value="">Loading...</option>`;
   barangaySelect.innerHTML = `<option value="">Select Barangay</option>`; // Reset barangay when province changes
@@ -40,7 +41,7 @@ provinceSelect.addEventListener("change", function () {
       data.sort((a, b) => a.name.localeCompare(b.name));
 
       data.forEach(city => {
-        citySelect.innerHTML += `<option value="${city.code}">${city.name}</option>`;
+        citySelect.innerHTML += `<option value="${city.code}" data-name="${city.name}">${city.name}</option>`; // Store name
       });
     })
     .catch(error => {
@@ -52,6 +53,7 @@ provinceSelect.addEventListener("change", function () {
 // When City changes → load Barangays
 citySelect.addEventListener("change", function () {
   const cityCode = this.value;
+  const cityName = this.options[this.selectedIndex].dataset.name; // Get the name
 
   barangaySelect.innerHTML = `<option value="">Loading...</option>`;
 
