@@ -1,53 +1,78 @@
-document.getElementById('bookingForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = {
-        customer_name: document.getElementById('customer_name').value,
-        customer_email: document.getElementById('customer_email').value,
-        customer_phone: document.getElementById('customer_phone').value,
-        booking_date: document.getElementById('booking_date').value,
-        booking_time: document.getElementById('booking_time').value,
-        number_of_people: document.getElementById('number_of_people').value,
-        special_requests: document.getElementById('special_requests').value
-    };
+const provinceSelect = document.getElementById("province");
+    const citySelect = document.getElementById("city");
+    const barangaySelect = document.getElementById("barangay");
 
-    // Send data to PHP using Fetch API
-    fetch('process_booking.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
+// Load Provinces - Filtered for CALABARZON (Region Code: 040000000)
+fetch("https://psgc.gitlab.io/api/provinces/")
+  .then(res => res.json())
+  .then(data => {
+    // Filter for CALABARZON region (regionCode: '040000000')
+    const calabarzonProvinces = data.filter(province => province.regionCode === '040000000');
+    
+    calabarzonProvinces.sort((a, b) => a.name.localeCompare(b.name));
+    provinceSelect.innerHTML = `<option value="">Select Province</option>`; // Reset options
+    calabarzonProvinces.forEach(province => {
+      provinceSelect.innerHTML += `<option value="${province.code}" data-name="${province.name}">${province.name}</option>`;
+    });
+  })
+  .catch(error => {
+      console.error("Error fetching provinces:", error);
+      provinceSelect.innerHTML = `<option value="">Error loading provinces</option>`;
+  });
+
+// When Province changes → load Cities
+provinceSelect.addEventListener("change", function () {
+  const provinceCode = this.value;
+  const provinceName = this.options[this.selectedIndex].dataset.name; // Get the name
+
+  citySelect.innerHTML = `<option value="">Loading...</option>`;
+  barangaySelect.innerHTML = `<option value="">Select Barangay</option>`; // Reset barangay when province changes
+
+  if (!provinceCode) { // If no province is selected
+      citySelect.innerHTML = `<option value="">Select City</option>`;
+      return;
+  }
+
+  fetch(`https://psgc.gitlab.io/api/provinces/${provinceCode}/cities-municipalities/`)
+    .then(res => res.json())
     .then(data => {
-        const messageDiv = document.getElementById('message');
-        
-        if (data.success) {
-            messageDiv.innerHTML = `
-                <div class="success">
-                    ✅ Booking successful! Confirmation sent to ${formData.customer_email}<br>
-                    Reference #: ${data.booking_id}
-                </div>
-            `;
-            document.getElementById('bookingForm').reset();
-        } else {
-            messageDiv.innerHTML = `
-                <div class="error">
-                    ❌ ${data.message}
-                </div>
-            `;
-        }
+      citySelect.innerHTML = `<option value="">Select City</option>`;
+      data.sort((a, b) => a.name.localeCompare(b.name));
+
+      data.forEach(city => {
+        citySelect.innerHTML += `<option value="${city.code}" data-name="${city.name}">${city.name}</option>`; // Store name
+      });
     })
     .catch(error => {
-        document.getElementById('message').innerHTML = `
-            <div class="error">
-                ❌ Connection error. Please try again.
-            </div>
-        `;
+        console.error("Error fetching cities:", error);
+        citySelect.innerHTML = `<option value="">Error loading cities</option>`;
     });
 });
 
-// Set minimum date to today
-document.getElementById('booking_date').min = new Date().toISOString().split('T')[0];
+// When City changes → load Barangays
+citySelect.addEventListener("change", function () {
+  const cityCode = this.value;
+  const cityName = this.options[this.selectedIndex].dataset.name; // Get the name
+
+  barangaySelect.innerHTML = `<option value="">Loading...</option>`;
+
+  if (!cityCode) { // If no city is selected
+      barangaySelect.innerHTML = `<option value="">Select Barangay</option>`;
+      return;
+  }
+
+  fetch(`https://psgc.gitlab.io/api/cities-municipalities/${cityCode}/barangays/`)
+    .then(res => res.json())
+    .then(data => {
+      barangaySelect.innerHTML = `<option value="">Select Barangay</option>`;
+      data.sort((a, b) => a.name.localeCompare(b.name));
+
+      data.forEach(brgy => {
+        barangaySelect.innerHTML += `<option value="${brgy.name}">${brgy.name}</option>`;
+      });
+    })
+    .catch(error => {
+        console.error("Error fetching barangays:", error);
+        barangaySelect.innerHTML = `<option value="">Error loading barangays</option>`;
+    });
+});
