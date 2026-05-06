@@ -1,5 +1,4 @@
-/******************************** PHILIPPINE AUTO-LOAD ADDRESS (MODIFIED FOR CALABARZON) **********/
-    const provinceSelect = document.getElementById("province");
+const provinceSelect = document.getElementById("province");
     const citySelect = document.getElementById("city");
     const barangaySelect = document.getElementById("barangay");
 
